@@ -1,0 +1,243 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "Outfit", sans-serif;
+}
+
+/* experience */
+.experience {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#experience-canv {
+    width: 100%;
+    height: 100%;
+}
+
+/* utilities */
+.hidden {
+    display: none !important;
+}
+
+/* modal */
+.modal {
+    z-index: 999;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+    border: 2px solid #ff6600;
+    border-radius: 12px;
+    color: white;
+    box-shadow: 0 20px 60px rgba(255, 102, 0, 0.3);
+    overflow: hidden;
+    animation: modalAppear 0.3s ease-out;
+}
+
+@keyframes modalAppear {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.modal-wrapper {
+    padding: 20px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #333;
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ff6600;
+}
+
+.modal-exit-button {
+    background: transparent;
+    border: 2px solid #ff6600;
+    color: #ff6600;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-exit-button:hover {
+    background: #ff6600;
+    color: #000;
+}
+
+.modal-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Layout visuel (image + graphique) */
+.modal-visual {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.modal-image-container {
+    flex: 0 0 40%;
+    max-width: 300px;
+}
+
+.modal-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: contain;
+}
+
+.modal-image.hidden {
+    display: none;
+}
+
+/* Graphique dans le modal */
+.modal-chart {
+    flex: 1;
+    min-width: 300px;
+    height: 300px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+/* Description */
+.modal-project-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #ccc;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid #ff6600;
+}
+
+/* Stats dans le modal */
+.modal-stats {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 25px;
+    background: rgba(255, 102, 0, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 102, 0, 0.3);
+    min-width: 120px;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ff6600;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #999;
+    text-transform: uppercase;
+    margin-top: 5px;
+}
+
+/* Overlay sombre derrière le modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 998;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-visual {
+        flex-direction: column;
+    }
+    
+    .modal-image-container {
+        flex: none;
+        max-width: 100%;
+        text-align: center;
+    }
+    
+    .modal-image {
+        max-height: 200px;
+        width: auto;
+    }
+    
+    .modal-chart {
+        min-width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .modal {
+        width: 95%;
+        max-height: 85vh;
+    }
+    
+    .modal-chart {
+        height: 250px;
+    }
+    
+    .modal-title {
+        font-size: 1.2rem;
+    }
+    
+    .stat-item {
+        min-width: 100px;
+        padding: 10px 15px;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+}
