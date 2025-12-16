@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +15,28 @@
 
     <div class="experience">
         <canvas id="experience-canv"></canvas>
+    </div>
+
+    <!-- Écran de sélection de moto -->
+    <div class="selection-screen">
+        <div class="selection-wrapper">
+            <h1 class="selection-title">Bienvenue sur <span>MotoGP</span> DataViz</h1>
+            <p class="selection-subtitle">Choisissez votre moto</p>
+            <div class="selection-motos">
+                <div class="moto-card" data-player="player">
+                    <div class="moto-preview white"></div>
+                    <span class="moto-name">Standard</span>
+                </div>
+                <div class="moto-card" data-player="player2">
+                    <div class="moto-preview red"></div>
+                    <span class="moto-name">Ducati</span>
+                </div>
+                <div class="moto-card" data-player="player3">
+                    <div class="moto-preview blue"></div>
+                    <span class="moto-name">Yamaha</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Modal pour afficher les données -->

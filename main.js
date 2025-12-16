@@ -372,6 +372,58 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// ===== ÉCRAN DE SÉLECTION =====
+const selectionScreen = document.querySelector('.selection-screen');
+const motoCards = document.querySelectorAll('.moto-card');
+let selectedPlayer = null;
+let player1 = null;
+let player2 = null;
+let player3 = null;
+
+motoCards.forEach(card => {
+    card.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const playerName = card.dataset.player;
+        console.log('Carte cliquée:', playerName);
+        selectMoto(playerName);
+    });
+});
+
+function selectMoto(playerName) {
+    // Vérifier que les players sont chargés
+    if (!player1 || !player2) {
+        console.log('Players pas encore chargés, attente...');
+        setTimeout(() => selectMoto(playerName), 100);
+        return;
+    }
+    
+    selectedPlayer = playerName;
+    
+    // Cacher l'écran de sélection
+    selectionScreen.classList.add('hidden');
+    
+    // Cacher tous les players
+    player1.visible = false;
+    player2.visible = false;
+    if (player3) player3.visible = false;
+
+    // Activer celui sélectionné
+    if (playerName === 'player') {
+        moto = player1;
+        player1.visible = true;
+    } else if (playerName === 'player2') {
+        moto = player2;
+        player2.visible = true;
+    } else if (playerName === 'player3' && player3) {
+        moto = player3;
+        player3.visible = true;
+    }
+        
+    // Initialiser la direction
+    direction = moto.rotation.y - Math.PI * 0.5;
+    console.log('Moto sélectionnée:', playerName);
+}
+
 // ===== OBJETS INTERACTIFS =====
 const intersectObjectsNames = [
     "Aprillia",
@@ -492,7 +544,7 @@ function updateCamera() {
 // ===== CHARGEMENT DU MODÈLE =====
 const loader = new GLTFLoader();
 
-loader.load('./DATAVIZ_tFinal.glb', function (glb) {
+loader.load('./DATAVIZ_tFinalducatiplayer.glb', function (glb) {
     glb.scene.traverse(child => {
         if (intersectObjectsNames.includes(child.name)) {
             intersectObjects.push(child);
@@ -504,17 +556,31 @@ loader.load('./DATAVIZ_tFinal.glb', function (glb) {
         }
     });
 
-    moto = glb.scene.getObjectByName('player');
+    // Récupérer les deux players
+    player1 = glb.scene.getObjectByName('player');
+    player2 = glb.scene.getObjectByName('player2');
+    player3 = glb.scene.getObjectByName('player3');
     
-    if (moto) {
-        console.log('Moto trouvée !', moto);
-        direction = moto.rotation.y - Math.PI * 0.5;
-        console.log('Direction initiale:', direction);
-    } else {
-        console.log('Moto NON trouvée !');
+    if (player1) {
+        console.log('Player 1 trouvé !', player1);
+        player1.visible = false; // Caché jusqu'à la sélection
+    }
+    
+    if (player2) {
+        console.log('Player 2 trouvé !', player2);
+        player2.visible = false; // Caché jusqu'à la sélection
+    }
+
+    if (player3) {
+        console.log('Player 3 trouvé !', player3);
+        player3.visible = false; // Caché jusqu'à la sélection
     }
 
     scene.add(glb.scene);
+    
+    // Modèle chargé, afficher l'écran de sélection
+    console.log('GLB chargé ! Prêt à jouer.');
+    selectionScreen.classList.add('loaded');
 
 }, undefined, function (error) {
     console.error(error);
@@ -599,4 +665,4 @@ function animate() {
 
 renderer.setAnimationLoop(animate);
 
-console.log(' MotoGP DataViz 3D initialisé !');
+console.log('🏍️ MotoGP DataViz 3D initialisé !');
