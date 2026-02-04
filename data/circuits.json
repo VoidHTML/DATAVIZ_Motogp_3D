@@ -1,0 +1,45 @@
+{
+  "titre": "Circuits Mythiques du MotoGP",
+  "circuits": [
+    {
+      "nom": "Mugello",
+      "pays": "Italie",
+      "region": "Toscane",
+      "drapeau": "🇮🇹",
+      "longueur": "5.245 km",
+      "virages": 15,
+      "record": "1'45.519",
+      "image": "img/mugello.jpg"
+    },
+    {
+      "nom": "Catalunya",
+      "pays": "Espagne",
+      "region": "Barcelone",
+      "drapeau": "🇪🇸",
+      "longueur": "4.657 km",
+      "virages": 14,
+      "record": "1'38.853",
+      "image": "img/catalunya.jpg"
+    },
+    {
+      "nom": "Silverstone",
+      "pays": "Royaume-Uni",
+      "region": "",
+      "drapeau": "🇬🇧",
+      "longueur": "5.891 km",
+      "virages": 18,
+      "record": "1'57.767",
+      "image": "img/silverstone.jpg"
+    },
+    {
+      "nom": "Phillip Island",
+      "pays": "Australie",
+      "region": "Victoria",
+      "drapeau": "🇦🇺",
+      "longueur": "4.448 km",
+      "virages": 12,
+      "record": "1'27.899",
+      "image": "img/philipisland.jpg"
+    }
+  ]
+}

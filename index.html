@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MotoGP DataViz 3D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+    <!-- ECharts pour les graphiques -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+</head>
+<body>
+
+    <div class="experience">
+        <canvas id="experience-canv"></canvas>
+    </div>
+
+    <!-- Écran de sélection de moto -->
+    <div class="selection-screen">
+        <div class="selection-wrapper">
+            <h1 class="selection-title">Bienvenue sur <span>MotoGP</span> DataViz</h1>
+            <p class="selection-subtitle">Choisissez votre moto</p>
+            <div class="selection-motos">
+                <div class="moto-card" data-player="player">
+                    <div class="moto-preview white"></div>
+                    <span class="moto-name">Standard</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour afficher les données -->
+    <div class="modal hidden">
+        <div class="modal-wrapper">
+            <!-- Image à gauche -->
+            <div class="modal-left">
+                <img id="modal-image" src="" alt="" class="modal-image">
+            </div>
+            
+            <!-- Contenu à droite -->
+            <div class="modal-right">
+                <button class="modal-exit-button">✕</button>
+                <div class="modal-title">Titre</div>
+                
+                <!-- Graphique -->
+                <div id="modal-chart" class="modal-chart"></div>
+                
+                <!-- Description -->
+                <div class="modal-project-description"></div>
+                
+                <!-- Stats -->
+                <div class="modal-stats"></div>
+            </div>
+        </div>
+    </div>
+
+    <script type="importmap">
+{
+    "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.149.0/examples/jsm/"
+    }
+}
+    </script>
+    <script type="module" src="./main.js"></script>
+</body>
+</html>

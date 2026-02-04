@@ -1,0 +1,425 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "Outfit", sans-serif;
+}
+
+/* ===== ÉCRAN DE SÉLECTION ===== */
+.selection-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0d0d0d 100%);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.selection-screen.hidden {
+    display: none;
+}
+
+.selection-wrapper {
+    text-align: center;
+    padding: 40px;
+}
+
+.selection-title {
+    font-size: 3rem;
+    color: #fff;
+    margin-bottom: 10px;
+    font-weight: 300;
+}
+
+.selection-title span {
+    color: #ff6600;
+    font-weight: 700;
+}
+
+.selection-subtitle {
+    font-size: 1.2rem;
+    color: #888;
+    margin-bottom: 50px;
+}
+
+.selection-motos {
+    display: flex;
+    gap: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.selection-screen.loaded .selection-motos {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.selection-subtitle::after {
+    content: " (Chargement...)";
+}
+
+.selection-screen.loaded .selection-subtitle::after {
+    content: "";
+}
+
+.moto-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.moto-card:hover {
+    transform: scale(1.05);
+}
+
+.moto-card:hover .moto-preview {
+    box-shadow: 0 0 30px currentColor;
+}
+
+.moto-preview {
+    width: 150px;
+    height: 150px;
+    border-radius: 12px;
+    border: 4px solid;
+    background: rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+.moto-preview.white {
+    border-color: #ffffff;
+    color: #ffffff;
+}
+
+.moto-preview.red {
+    border-color: #dc143c;
+    color: #dc143c;
+}
+
+.moto-preview.blue {
+    border-color: #3498db;
+    color: #3498db;
+}
+
+.moto-name {
+    font-size: 1.1rem;
+    color: #ccc;
+    font-weight: 500;
+}
+
+.moto-card:hover .moto-name {
+    color: #fff;
+}
+
+/* ===== EXPERIENCE ===== */
+.experience {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#experience-canv {
+    width: 100%;
+    height: 100%;
+}
+
+/* utilities */
+.hidden {
+    display: none !important;
+}
+
+/* modal */
+.modal {
+    z-index: 999;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 95%;
+    max-width: 1100px;
+    max-height: 90vh;
+    background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+    border-radius: 16px;
+    color: white;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    animation: modalAppear 0.3s ease-out;
+}
+
+@keyframes modalAppear {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.modal-wrapper {
+    display: flex;
+    height: 100%;
+    max-height: 90vh;
+}
+
+/* Partie gauche - Image de fond */
+.modal-left {
+    flex: 0 0 45%;
+    background-image: url('img/yamahafond.jpg');
+    background-size: cover;
+    background-position: left center;
+    min-height: 500px;
+}
+
+.modal-image {
+    display: none;
+}
+
+/* Partie droite - Contenu */
+.modal-right {
+    flex: 1;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border: 3px solid var(--modal-color, #ff6600);
+    border-radius: 16px;
+    margin: 15px 15px 15px 0;
+    position: relative;
+    overflow-y: auto;
+}
+
+.modal-exit-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: #888;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-exit-button:hover {
+    color: #fff;
+}
+
+.modal-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--modal-color, #ff6600);
+    padding-right: 30px;
+}
+
+/* Graphique dans le modal */
+.modal-chart {
+    width: 100%;
+    height: 220px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+}
+
+/* Description */
+.modal-project-description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #fff;
+    padding: 20px;
+    background: var(--modal-color-light, rgba(255, 102, 0, 0.2));
+    border-radius: 12px;
+    text-align: center;
+}
+
+/* Stats dans le modal */
+.modal-stats {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 30px;
+    background: var(--modal-color-light, rgba(255, 102, 0, 0.2));
+    border-radius: 12px;
+    min-width: 140px;
+    flex: 1;
+}
+
+.stat-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #ccc;
+    text-transform: uppercase;
+    margin-top: 5px;
+}
+
+/* Overlay sombre derrière le modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 998;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .modal-wrapper {
+        flex-direction: column;
+    }
+    
+    .modal-left {
+        flex: none;
+        max-height: 30vh;
+    }
+    
+    .modal-right {
+        margin: 0 15px 15px 15px;
+    }
+    
+    .modal-image {
+        max-height: 25vh;
+    }
+}
+
+@media (max-width: 600px) {
+    .modal {
+        width: 98%;
+        max-height: 95vh;
+    }
+    
+    .modal-chart {
+        height: 180px;
+    }
+    
+    .modal-title {
+        font-size: 1.4rem;
+    }
+    
+    .stat-item {
+        min-width: 100px;
+        padding: 15px 20px;
+    }
+    
+    .stat-number {
+        font-size: 1.4rem;
+    }
+}
+/* ===== CIRCUITS CAROUSEL ===== */
+.circuits-carousel {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.circuit-card {
+    background: #2a3a4a;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.circuit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+}
+
+.circuit-image {
+    width: 100%;
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+}
+
+.circuit-info {
+    padding: 15px;
+}
+
+.circuit-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #10b981;
+    margin: 0 0 5px 0;
+}
+
+.circuit-location {
+    font-size: 0.9rem;
+    color: #8899aa;
+    margin: 0 0 15px 0;
+}
+
+.circuit-stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.circuit-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #1e2a3a;
+    padding: 10px;
+    border-radius: 8px;
+    flex: 1;
+}
+
+.circuit-stat-label {
+    font-size: 0.7rem;
+    color: #8899aa;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.circuit-stat-value {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+@media (max-width: 900px) {
+    .circuits-carousel {
+        grid-template-columns: 1fr;
+    }
+}
