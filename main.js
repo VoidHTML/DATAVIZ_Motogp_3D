@@ -36,7 +36,6 @@ renderer.toneMappingExposure = 1.25;
 let paysData = null;
 let crashsData = null;
 let constructeursData = null;
-let circuitsData = null;
 let currentChart = null;
 
 // Mapping des objets 3D vers les données JSON
@@ -48,8 +47,7 @@ const dataMapping = {
     "Aprillia": "aprilia",
     "Susuki": "suzuki",
     "Crash": "crashs",
-    "podium": "pays",
-    "Circuit": "circuits"
+    "podium": "pays"
 };
 
 // Couleurs pour chaque constructeur
@@ -61,8 +59,7 @@ const colors = {
     "aprilia": { main: "#00aa00", light: "rgba(0, 170, 0, 0.25)" },
     "suzuki": { main: "#0066cc", light: "rgba(0, 102, 204, 0.25)" },
     "crashs": { main: "#ff6600", light: "rgba(255, 102, 0, 0.25)" },
-    "pays": { main: "#ff6600", light: "rgba(255, 102, 0, 0.25)" },
-    "circuits": { main: "#10b981", light: "rgba(16, 185, 129, 0.25)" }
+    "pays": { main: "#ff6600", light: "rgba(255, 102, 0, 0.25)" }
 };
 
 // Images de fond pour chaque constructeur
@@ -72,10 +69,9 @@ const backgroundImages = {
     "yamaha": "img/yamahafond.jpg",
     "ktm": "img/KTMfond.jpg",
     "aprilia": "img/Apriliafond.jpg",
-    "suzuki": "img/Suzukifond.jpg",
+    "suzuki": "img/Suzukifond.jpg",  // Placeholder, à remplacer
     "crashs": "img/Yamahafond.png",
-    "pays": "img/Yamahafond.png",
-    "circuits": null
+    "pays": "img/Yamahafond.png"
 };
 
 // Images pour chaque constructeur
@@ -105,17 +101,15 @@ const descriptions = {
 // Charger les données JSON
 async function loadData() {
     try {
-        const [pays, crashs, constructeurs, circuits] = await Promise.all([
+        const [pays, crashs, constructeurs] = await Promise.all([
             fetch('./data/pays.json').then(r => r.json()),
             fetch('./data/crashs.json').then(r => r.json()),
-            fetch('./data/constructeurs.json').then(r => r.json()),
-            fetch('./data/circuits.json').then(r => r.json())
+            fetch('./data/constructeurs.json').then(r => r.json())
         ]);
         paysData = pays;
         crashsData = crashs;
         constructeursData = constructeurs;
-        circuitsData = circuits;
-        console.log('Données chargées !', { paysData, crashsData, constructeursData, circuitsData });
+        console.log('Données chargées !', { paysData, crashsData, constructeursData });
     } catch (err) {
         console.error('Erreur chargement données:', err);
     }
@@ -148,14 +142,9 @@ function showModal(objectName) {
     modal.style.setProperty('--modal-color-light', color.light);
     
     // Changer l'image de fond
-    const bgImage = backgroundImages[dataKey];
+    const bgImage = backgroundImages[dataKey] || backgroundImages.pays;
     const modalLeft = document.querySelector('.modal-left');
-    if (bgImage) {
-        modalLeft.style.backgroundImage = `url('${bgImage}')`;
-        modalLeft.style.display = 'block';
-    } else {
-        modalLeft.style.display = 'none';
-    }
+    modalLeft.style.backgroundImage = `url('${bgImage}')`;
 
     // Créer l'overlay
     overlay = document.createElement('div');
@@ -171,8 +160,6 @@ function showModal(objectName) {
         showPaysData();
     } else if (dataKey === 'crashs') {
         showCrashsData();
-    } else if (dataKey === 'circuits') {
-        showCircuitsData();
     } else {
         showConstructeurData(dataKey);
     }
@@ -233,45 +220,6 @@ function showCrashsData() {
     
     // Graphique
     setTimeout(() => createCrashsChart(), 100);
-}
-
-function showCircuitsData() {
-    if (!circuitsData) return;
-    
-    modalTitle.textContent = circuitsData.titre;
-    
-    // Masquer les éléments non utilisés
-    modalChart.style.display = 'none';
-    modalDescription.style.display = 'none';
-    
-    // Créer le carousel de circuits
-    modalStats.innerHTML = `
-        <div class="circuits-carousel">
-            ${circuitsData.circuits.map(circuit => `
-                <div class="circuit-card">
-                    <div class="circuit-image" style="background-image: url('${circuit.image}')"></div>
-                    <div class="circuit-info">
-                        <h3 class="circuit-name">🏁 ${circuit.nom}</h3>
-                        <p class="circuit-location">${circuit.drapeau} ${circuit.pays}${circuit.region ? ' - ' + circuit.region : ''}</p>
-                        <div class="circuit-stats">
-                            <div class="circuit-stat">
-                                <span class="circuit-stat-label">Longueur</span>
-                                <span class="circuit-stat-value">${circuit.longueur}</span>
-                            </div>
-                            <div class="circuit-stat">
-                                <span class="circuit-stat-label">Virages</span>
-                                <span class="circuit-stat-value">${circuit.virages}</span>
-                            </div>
-                            <div class="circuit-stat">
-                                <span class="circuit-stat-label">Record</span>
-                                <span class="circuit-stat-value">${circuit.record}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('')}
-        </div>
-    `;
 }
 
 function showConstructeurData(constructeur) {
@@ -449,14 +397,6 @@ function createConstructeurChart(constructeur) {
 function hideModal() {
     modal.classList.add('hidden');
     
-    // Réafficher les éléments cachés pour circuits
-    modalChart.style.display = 'block';
-    modalDescription.style.display = 'block';
-    
-    // Réafficher modal-left
-    const modalLeft = document.querySelector('.modal-left');
-    modalLeft.style.display = 'block';
-    
     if (overlay) {
         overlay.remove();
         overlay = null;
@@ -477,33 +417,24 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// ===== ÉCRAN DE SÉLECTION =====
-const selectionScreen = document.querySelector('.selection-screen');
-const motoCards = document.querySelectorAll('.moto-card');
-let selectedPlayer = null;
+// ===== ÉCRAN DE CHARGEMENT =====
+const loadingScreen = document.querySelector('.loading-screen');
+const controlsHint = document.querySelector('.controls-hint');
 let player1 = null;
 
-motoCards.forEach(card => {
-    card.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const playerName = card.dataset.player;
-        console.log('Carte cliquée:', playerName);
-        selectMoto(playerName);
-    });
-});
-
-function selectMoto(playerName) {
+function hideLoadingScreen() {
     // Vérifier que le player est chargé
     if (!player1) {
         console.log('Player pas encore chargé, attente...');
-        setTimeout(() => selectMoto(playerName), 100);
+        setTimeout(hideLoadingScreen, 100);
         return;
     }
     
-    selectedPlayer = playerName;
+    // Cacher l'écran de chargement
+    loadingScreen.classList.add('hidden');
     
-    // Cacher l'écran de sélection
-    selectionScreen.classList.add('hidden');
+    // Afficher les contrôles
+    controlsHint.classList.remove('hidden');
     
     // Activer le player
     moto = player1;
@@ -511,7 +442,7 @@ function selectMoto(playerName) {
         
     // Initialiser la direction
     direction = moto.rotation.y - Math.PI * 0.5;
-    console.log('Moto sélectionnée:', playerName);
+    console.log('Jeu démarré !');
 }
 
 // ===== OBJETS INTERACTIFS =====
@@ -523,8 +454,7 @@ const intersectObjectsNames = [
     "KTM",
     "Kawasaki", 
     "Crash", 
-    "podium",
-    "Circuit"
+    "podium", 
 ];
 const intersectObjects = [];
 let intersectObject = "";
@@ -652,14 +582,14 @@ loader.load('./DATAVIZ_tFinalducatiplayer.glb', function (glb) {
     
     if (player1) {
         console.log('Player trouvé !', player1);
-        player1.visible = false; // Caché jusqu'à la sélection
+        player1.visible = false; // Caché jusqu'au chargement
     }
 
     scene.add(glb.scene);
     
-    // Modèle chargé, afficher l'écran de sélection
+    // Modèle chargé, cacher le loader après un délai
     console.log('GLB chargé ! Prêt à jouer.');
-    selectionScreen.classList.add('loaded');
+    setTimeout(hideLoadingScreen, 1500); // Délai pour voir l'animation
 
 }, undefined, function (error) {
     console.error(error);
@@ -723,11 +653,11 @@ function animate() {
 
     if (intersects.length > 0) {
         document.body.style.cursor = 'pointer';
-        // On récupérer le nom de l'objet ou de son parent
+        // Récupérer le nom de l'objet ou de son parent
         let obj = intersects[0].object;
         intersectObject = obj.name;
         
-        // Si le nom n'est pas dans la liste, alors on cherche le parent
+        // Si le nom n'est pas dans la liste, chercher le parent
         if (!intersectObjectsNames.includes(intersectObject) && obj.parent) {
             intersectObject = obj.parent.name;
         }
