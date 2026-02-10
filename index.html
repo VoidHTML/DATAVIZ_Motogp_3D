@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
+    <!-- ECharts pour les graphiques -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 </head>
 <body>
@@ -16,6 +17,7 @@
         <canvas id="experience-canv"></canvas>
     </div>
 
+    <!-- Écran de chargement -->
     <div class="loading-screen">
         <div class="loader-container">
             <div class="loader">
@@ -81,6 +83,7 @@
         </div>
     </div>
 
+    <!-- Contrôles -->
     <div class="controls-hint hidden">
         <div class="control-item"><span class="key">Z</span> Avancer</div>
         <div class="control-item"><span class="key">S</span> Reculer</div>
@@ -89,20 +92,36 @@
         <div class="control-item"><span class="key">Clic</span> Interagir</div>
     </div>
 
+    <!-- Joystick mobile -->
+    <div class="mobile-controls hidden">
+        <div class="joystick-container">
+            <div class="joystick-base">
+                <div class="joystick-stick"></div>
+            </div>
+        </div>
+        <div class="mobile-info">Touchez les éléments pour interagir</div>
+    </div>
+
+    <!-- Modal pour afficher les données -->
     <div class="modal hidden">
         <div class="modal-wrapper">
+            <!-- Image à gauche -->
             <div class="modal-left">
                 <img id="modal-image" src="" alt="" class="modal-image">
             </div>
             
+            <!-- Contenu à droite -->
             <div class="modal-right">
                 <button class="modal-exit-button">✕</button>
                 <div class="modal-title">Titre</div>
                 
+                <!-- Graphique -->
                 <div id="modal-chart" class="modal-chart"></div>
                 
+                <!-- Description -->
                 <div class="modal-project-description"></div>
                 
+                <!-- Stats -->
                 <div class="modal-stats"></div>
             </div>
         </div>

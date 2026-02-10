@@ -36,6 +36,7 @@ renderer.toneMappingExposure = 1.25;
 let paysData = null;
 let crashsData = null;
 let constructeursData = null;
+let circuitsData = null;
 let currentChart = null;
 
 // Mapping des objets 3D vers les données JSON
@@ -47,7 +48,8 @@ const dataMapping = {
     "Aprillia": "aprilia",
     "Susuki": "suzuki",
     "Crash": "crashs",
-    "podium": "pays"
+    "podium": "pays",
+    "Circuit": "circuits"
 };
 
 // Couleurs pour chaque constructeur
@@ -59,7 +61,8 @@ const colors = {
     "aprilia": { main: "#00aa00", light: "rgba(0, 170, 0, 0.25)" },
     "suzuki": { main: "#0066cc", light: "rgba(0, 102, 204, 0.25)" },
     "crashs": { main: "#ff6600", light: "rgba(255, 102, 0, 0.25)" },
-    "pays": { main: "#ff6600", light: "rgba(255, 102, 0, 0.25)" }
+    "pays": { main: "#ff6600", light: "rgba(255, 102, 0, 0.25)" },
+    "circuits": { main: "#10b981", light: "rgba(16, 185, 129, 0.25)" }
 };
 
 // Images de fond pour chaque constructeur
@@ -69,9 +72,10 @@ const backgroundImages = {
     "yamaha": "img/yamahafond.jpg",
     "ktm": "img/KTMfond.jpg",
     "aprilia": "img/Apriliafond.jpg",
-    "suzuki": "img/Suzukifond.jpg",  // Placeholder, à remplacer
+    "suzuki": "img/Suzukifond.jpg",
     "crashs": "img/Yamahafond.png",
-    "pays": "img/Yamahafond.png"
+    "pays": "img/Yamahafond.png",
+    "circuits": null
 };
 
 // Images pour chaque constructeur
@@ -101,15 +105,17 @@ const descriptions = {
 // Charger les données JSON
 async function loadData() {
     try {
-        const [pays, crashs, constructeurs] = await Promise.all([
+        const [pays, crashs, constructeurs, circuits] = await Promise.all([
             fetch('./data/pays.json').then(r => r.json()),
             fetch('./data/crashs.json').then(r => r.json()),
-            fetch('./data/constructeurs.json').then(r => r.json())
+            fetch('./data/constructeurs.json').then(r => r.json()),
+            fetch('./data/circuits.json').then(r => r.json())
         ]);
         paysData = pays;
         crashsData = crashs;
         constructeursData = constructeurs;
-        console.log('Données chargées !', { paysData, crashsData, constructeursData });
+        circuitsData = circuits;
+        console.log('Données chargées !', { paysData, crashsData, constructeursData, circuitsData });
     } catch (err) {
         console.error('Erreur chargement données:', err);
     }
@@ -142,9 +148,14 @@ function showModal(objectName) {
     modal.style.setProperty('--modal-color-light', color.light);
     
     // Changer l'image de fond
-    const bgImage = backgroundImages[dataKey] || backgroundImages.pays;
+    const bgImage = backgroundImages[dataKey];
     const modalLeft = document.querySelector('.modal-left');
-    modalLeft.style.backgroundImage = `url('${bgImage}')`;
+    if (bgImage) {
+        modalLeft.style.backgroundImage = `url('${bgImage}')`;
+        modalLeft.style.display = 'block';
+    } else {
+        modalLeft.style.display = 'none';
+    }
 
     // Créer l'overlay
     overlay = document.createElement('div');
@@ -160,6 +171,8 @@ function showModal(objectName) {
         showPaysData();
     } else if (dataKey === 'crashs') {
         showCrashsData();
+    } else if (dataKey === 'circuits') {
+        showCircuitsData();
     } else {
         showConstructeurData(dataKey);
     }
@@ -220,6 +233,45 @@ function showCrashsData() {
     
     // Graphique
     setTimeout(() => createCrashsChart(), 100);
+}
+
+function showCircuitsData() {
+    if (!circuitsData) return;
+    
+    modalTitle.textContent = circuitsData.titre;
+    
+    // Masquer les éléments non utilisés
+    modalChart.style.display = 'none';
+    modalDescription.style.display = 'none';
+    
+    // Créer le carousel de circuits
+    modalStats.innerHTML = `
+        <div class="circuits-carousel">
+            ${circuitsData.circuits.map(circuit => `
+                <div class="circuit-card">
+                    <div class="circuit-image" style="background-image: url('${circuit.image}')"></div>
+                    <div class="circuit-info">
+                        <h3 class="circuit-name">🏁 ${circuit.nom}</h3>
+                        <p class="circuit-location">${circuit.drapeau} ${circuit.pays}${circuit.region ? ' - ' + circuit.region : ''}</p>
+                        <div class="circuit-stats">
+                            <div class="circuit-stat">
+                                <span class="circuit-stat-label">Longueur</span>
+                                <span class="circuit-stat-value">${circuit.longueur}</span>
+                            </div>
+                            <div class="circuit-stat">
+                                <span class="circuit-stat-label">Virages</span>
+                                <span class="circuit-stat-value">${circuit.virages}</span>
+                            </div>
+                            <div class="circuit-stat">
+                                <span class="circuit-stat-label">Record</span>
+                                <span class="circuit-stat-value">${circuit.record}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
 }
 
 function showConstructeurData(constructeur) {
@@ -397,6 +449,14 @@ function createConstructeurChart(constructeur) {
 function hideModal() {
     modal.classList.add('hidden');
     
+    // Réafficher les éléments cachés pour circuits
+    modalChart.style.display = 'block';
+    modalDescription.style.display = 'block';
+    
+    // Réafficher modal-left
+    const modalLeft = document.querySelector('.modal-left');
+    modalLeft.style.display = 'block';
+    
     if (overlay) {
         overlay.remove();
         overlay = null;
@@ -454,10 +514,15 @@ const intersectObjectsNames = [
     "KTM",
     "Kawasaki", 
     "Crash", 
-    "podium", 
+    "podium",
+    "Circuit"
 ];
 const intersectObjects = [];
 let intersectObject = "";
+
+// ===== COLLISIONS =====
+const collisionObjects = [];
+const collisionDistance = 2; // Distance de collision
 
 // ===== CONTRÔLE DE MOTO =====
 let moto = null;
@@ -531,6 +596,26 @@ document.addEventListener('keyup', (e) => {
     }
 });
 
+function checkCollision(newX, newZ) {
+    if (!moto || collisionObjects.length === 0) return false;
+    
+    for (let obj of collisionObjects) {
+        // Obtenir la position mondiale de l'objet
+        const objPos = new THREE.Vector3();
+        obj.getWorldPosition(objPos);
+        
+        // Calculer la distance entre la nouvelle position et l'objet
+        const dx = newX - objPos.x;
+        const dz = newZ - objPos.z;
+        const distance = Math.sqrt(dx * dx + dz * dz);
+        
+        if (distance < collisionDistance) {
+            return true; // Collision détectée
+        }
+    }
+    return false; // Pas de collision
+}
+
 function updateMoto() {
     if (!moto) return;
 
@@ -548,8 +633,18 @@ function updateMoto() {
     if (keys.left) direction -= motoSettings.rotationSpeed;
     if (keys.right) direction += motoSettings.rotationSpeed;
 
-    moto.position.x -= Math.sin(direction) * motoSettings.speed;
-    moto.position.z -= Math.cos(direction) * motoSettings.speed;
+    // Calculer la nouvelle position
+    const newX = moto.position.x - Math.sin(direction) * motoSettings.speed;
+    const newZ = moto.position.z - Math.cos(direction) * motoSettings.speed;
+    
+    // Vérifier les collisions avant de bouger
+    if (!checkCollision(newX, newZ)) {
+        moto.position.x = newX;
+        moto.position.z = newZ;
+    } else {
+        // Collision : arrêter la moto
+        motoSettings.speed = 0;
+    }
 
     moto.rotation.y = direction + Math.PI * 0.5;
 }
@@ -567,10 +662,18 @@ const loader = new GLTFLoader();
 
 loader.load('./DATAVIZ_tFinalducatiplayer.glb', function (glb) {
     glb.scene.traverse(child => {
+        // Objets interactifs (cliquables)
         if (intersectObjectsNames.includes(child.name)) {
             intersectObjects.push(child);
             console.log('Objet interactif trouvé:', child.name);
         }
+        
+        // Objets de collision (feuillages)
+        if (child.name && child.name.startsWith('feuillage.')) {
+            collisionObjects.push(child);
+            console.log('Objet collision trouvé:', child.name);
+        }
+        
         if (child.isMesh) {
             child.castShadow = true;
             child.receiveShadow = true;
@@ -589,6 +692,7 @@ loader.load('./DATAVIZ_tFinalducatiplayer.glb', function (glb) {
     
     // Modèle chargé, cacher le loader après un délai
     console.log('GLB chargé ! Prêt à jouer.');
+    console.log('Objets collision:', collisionObjects.length);
     setTimeout(hideLoadingScreen, 1500); // Délai pour voir l'animation
 
 }, undefined, function (error) {
@@ -673,5 +777,100 @@ function animate() {
 }
 
 renderer.setAnimationLoop(animate);
+
+// ===== JOYSTICK MOBILE =====
+const mobileControls = document.querySelector('.mobile-controls');
+const joystickBase = document.querySelector('.joystick-base');
+const joystickStick = document.querySelector('.joystick-stick');
+
+let joystickActive = false;
+let joystickStartX = 0;
+let joystickStartY = 0;
+
+// Détection mobile
+function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+}
+
+// Afficher/cacher les contrôles selon le device
+function updateControlsVisibility() {
+    if (isMobile()) {
+        controlsHint.classList.add('hidden');
+        if (!loadingScreen.classList.contains('hidden')) return;
+        mobileControls.classList.remove('hidden');
+    } else {
+        mobileControls.classList.add('hidden');
+        if (!loadingScreen.classList.contains('hidden')) return;
+        controlsHint.classList.remove('hidden');
+    }
+}
+
+// Joystick touch events
+if (joystickBase) {
+    joystickBase.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        joystickActive = true;
+        const touch = e.touches[0];
+        const rect = joystickBase.getBoundingClientRect();
+        joystickStartX = rect.left + rect.width / 2;
+        joystickStartY = rect.top + rect.height / 2;
+    });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!joystickActive) return;
+        e.preventDefault();
+        
+        const touch = e.touches[0];
+        let deltaX = touch.clientX - joystickStartX;
+        let deltaY = touch.clientY - joystickStartY;
+        
+        // Limiter le mouvement
+        const maxDistance = 35;
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        if (distance > maxDistance) {
+            deltaX = (deltaX / distance) * maxDistance;
+            deltaY = (deltaY / distance) * maxDistance;
+        }
+        
+        // Bouger le stick visuellement
+        joystickStick.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        
+        // Appliquer les contrôles
+        const threshold = 10;
+        keys.forward = deltaY < -threshold;
+        keys.backward = deltaY > threshold;
+        keys.left = deltaX < -threshold;
+        keys.right = deltaX > threshold;
+    }, { passive: false });
+
+    document.addEventListener('touchend', () => {
+        joystickActive = false;
+        joystickStick.style.transform = 'translate(0, 0)';
+        keys.forward = false;
+        keys.backward = false;
+        keys.left = false;
+        keys.right = false;
+    });
+}
+
+// Mettre à jour hideLoadingScreen pour afficher les bons contrôles
+const originalHideLoadingScreen = hideLoadingScreen;
+hideLoadingScreen = function() {
+    if (!player1) {
+        setTimeout(hideLoadingScreen, 100);
+        return;
+    }
+    
+    loadingScreen.classList.add('hidden');
+    updateControlsVisibility();
+    
+    moto = player1;
+    player1.visible = true;
+    direction = moto.rotation.y - Math.PI * 0.5;
+    console.log('Jeu démarré !');
+};
+
+// Écouter le redimensionnement
+window.addEventListener('resize', updateControlsVisibility);
 
 console.log('🏍️ MotoGP DataViz 3D initialisé !');
