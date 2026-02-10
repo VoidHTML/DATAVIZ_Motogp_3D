@@ -835,12 +835,12 @@ if (joystickBase) {
         // Bouger le stick visuellement
         joystickStick.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
         
-        // Appliquer les contrôles
+        // Appliquer les contrôles (inversés)
         const threshold = 10;
-        keys.forward = deltaY < -threshold;
-        keys.backward = deltaY > threshold;
-        keys.left = deltaX < -threshold;
-        keys.right = deltaX > threshold;
+        keys.backward = deltaY < -threshold;
+        keys.forward = deltaY > threshold;
+        keys.right = deltaX < -threshold;
+        keys.left = deltaX > threshold;
     }, { passive: false });
 
     document.addEventListener('touchend', () => {
