@@ -839,8 +839,8 @@ if (joystickBase) {
         const threshold = 10;
         keys.forward = deltaY < -threshold;
         keys.backward = deltaY > threshold;
-        keys.left = deltaX > threshold;
-        keys.right = deltaX < -threshold;
+        keys.left = deltaX < -threshold;
+        keys.right = deltaX > threshold;
     }, { passive: false });
 
     document.addEventListener('touchend', () => {
@@ -873,4 +873,4 @@ hideLoadingScreen = function() {
 // Écouter le redimensionnement
 window.addEventListener('resize', updateControlsVisibility);
 
-console.log('MotoGP DataViz 3D initialisé !');
+console.log('🏍️ MotoGP DataViz 3D initialisé !');
