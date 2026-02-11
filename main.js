@@ -73,8 +73,8 @@ const backgroundImages = {
     "ktm": "img/KTMfond.jpg",
     "aprilia": "img/Apriliafond.jpg",
     "suzuki": "img/Suzukifond.jpg",
-    "crashs": "img/Yamahafond.png",
-    "pays": "img/Yamahafond.png",
+    "crashs": "img/crashphoto.jpg",
+    "pays": "img/victoire.jpg",
     "circuits": null
 };
 
